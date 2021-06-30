@@ -91,7 +91,7 @@ public class HomeWatcher {
             }  else {
                 pressCount = 0;
              } 
-             if (pressCount >= 7) {
+             if (pressCount >= 5) {
                  pressCount = 0;
                 mListener.onHomePressed();
              }
