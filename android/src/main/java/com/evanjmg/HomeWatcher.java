@@ -16,7 +16,7 @@ public class HomeWatcher {
     private OnHomePressedListener mListener;
     private InnerRecevier mRecevier;
     private  int pressCount = 0;
-    private Calendar lastTime = Calendar.getInstance();
+    private Calendar firstInstance = Calendar.getInstance();
     
     public HomeWatcher(Context context) {
         mContext = context;
@@ -54,48 +54,59 @@ public class HomeWatcher {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Calendar _now  = Calendar.getInstance();
-            lastTime.add(Calendar.SECOND, 1);
-            if(_now.before(lastTime)) 
+            //lastTime.add(Calendar.SECOND, 1);
+            Calendar  limitTime = (Calendar) firstInstance.clone();
+            limitTime.add(Calendar.MILLISECOND,1300);
+            if(_now.before(limitTime)) 
             { // this is recurrent.. 
                 if (action.equals(Intent.ACTION_SCREEN_OFF)) {
                     pressCount = pressCount + 1;
                     Log.e(TAG, "ACTION_SCREEN_OFF - " + pressCount);     
                 }
-                if (action.equals(Intent.ACTION_DREAMING_STOPPED)) {
-                    pressCount = pressCount + 1;
-                    Log.e(TAG, "ACTION_DREAMING_STOPPED - " + pressCount);     
-                }
-                if (action.equals(Intent.ACTION_DREAMING_STARTED)) {
-                    pressCount = pressCount + 1;
-                    Log.e(TAG, "ACTION_DREAMING_STARTED - " + pressCount);     
-                }
-                // if (action.equals(Intent.ACTION_USER_PRESENT)) {
-                //     pressCount = pressCount + 1;
-                //     Log.e(TAG, "ACTION_USER_PRESENT - " + pressCount);     
-                // }
+                //if (action.equals(Intent.ACTION_DREAMING_STOPPED)) {
+                //    pressCount = pressCount + 1;
+                //    Log.e(TAG, "ACTION_DREAMING_STOPPED - " + pressCount);     
+                //}
+                //if (action.equals(Intent.ACTION_DREAMING_STARTED)) {
+                //    pressCount = pressCount + 1;
+                //    Log.e(TAG, "ACTION_DREAMING_STARTED - " + pressCount);     
+                //}
                 if (action.equals(Intent.ACTION_SCREEN_ON)) {
                     pressCount = pressCount + 1;
                     Log.e(TAG, "ACTION_SCREEN_ON - " + pressCount);
-                    //String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
-                    //if (reason != null) {
-                    //    Log.e(TAG, "action:" + action + ",reason:" + reason);
-                    //    if (mListener != null) {
-                    //        if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
-                    //            mListener.onHomePressed();
-                    //        } else if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
-                    //            mListener.onRecentAppPressed();
-                    //        }
-                    //    }
-                    //}
                 }
-            }  else {
+            } else {
+                firstInstance = Calendar.getInstance();
                 pressCount = 0;
-             } 
-             if (pressCount >= 5) {
+                if (action.equals(Intent.ACTION_SCREEN_OFF)) {
+                    pressCount = 1;
+                    Log.e(TAG, "ACTION_SCREEN_OFF - " + pressCount);     
+                }
+                //if (action.equals(Intent.ACTION_DREAMING_STOPPED)) {
+                //    pressCount = 1;
+                //    Log.e(TAG, "ACTION_DREAMING_STOPPED - " + pressCount);     
+                //}
+                //if (action.equals(Intent.ACTION_DREAMING_STARTED)) {
+                //    pressCount = 1;
+                //    Log.e(TAG, "ACTION_DREAMING_STARTED - " + pressCount);     
+                //}
+                if (action.equals(Intent.ACTION_SCREEN_ON)) {
+                    pressCount = 1;
+                    Log.e(TAG, "ACTION_SCREEN_ON - " + pressCount);
+                }
+            }
+                  
+            //else {
+            //    pressCount = 0;
+            //    firstInstance = Calendar.getInstance();
+            //} 
+            
+            
+            if (pressCount >= 3) {
                  pressCount = 0;
                 mListener.onHomePressed();
-             }
-           lastTime = Calendar.getInstance();
+                firstInstance = Calendar.getInstance();
+            }
             
         }
     }
